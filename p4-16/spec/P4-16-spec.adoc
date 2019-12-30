@@ -9145,6 +9145,32 @@ absence), allowing architecture-independent analysis of P4 programs.
   `inout` parameters), but not with other function calls that may have
   side effects that affect the function.
 
+- `@localState` - When applied to an extern method, the extern method
+  implementation might read and/or write internal state, but all such
+  accessed state is limited to state associated directly with the extern
+  object instance on which the method is called. When applied to an extern
+  function, the accessible state is restricted to state associated directly
+  with this extern function. Method and function calls so annotated will
+  never read, nor write, global state of the architecture, nor the state
+  of any other extern object instance or function.
+
+- `@packetState` - Similar to `@localState`, except it is even more
+  restricted in the state that can be accessed. The internal state of the
+  extern object instance or extern function is partitioned by packets being
+  processed in the device. The extern method/function can only access the
+  part of its internal state that is associated with the current packet
+  being processed by the P4_16 code that made the method/function call. An
+  annotation of `@packetState` implies an annotation of `@localState`.
+
+- `@localIndexedState` - Similar to `@localState`, except it is even
+  more restricted in the state that can be accessed. The internal state
+  of the extern object instance or extern function is partitioned into an
+  array of independently accessible sub-states, each with its own index or
+  associated table entry. The extern method/function call can only access
+  the internal state associated with that one index, or one table entry,
+  and no others. An annotation of `@localIndexedState` implies an annotation
+  of `@localState`.
+
 [#sec-deprecated-anno]
 ==== Deprecated annotation
 
@@ -9415,6 +9441,12 @@ The following table shows all P4 reserved annotations.
 | `pure`        | pure function                                      | <<sec-extern-annotations>>
 
 | `noSideEffects` | function with no side effects                    | <<sec-extern-annotations>>
+
+| `localState`  | limited hidden state                               | <<sec-extern-annotations>>
+
+| `packetState` | limited hidden state                               | <<sec-extern-annotations>>
+
+| `localIndexedState`| limited hidden state                          | <<sec-extern-annotations>>
 
 | `noWarn`      | Has a string argument; inhibits compiler warnings  | <<sec-nowarn-anno>>
 
